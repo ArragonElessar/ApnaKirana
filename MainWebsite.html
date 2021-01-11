@@ -7,6 +7,7 @@
     </title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
+        //initialised jquery
         $(document).ready(function () {
             //searchbar functions
             $("#searchbar").keyup(function () {
@@ -34,6 +35,7 @@
                         setTimeout(function () { $("#frame").attr("src", "cart.html") }, 300);
                     })
                     $("#login").html("LogOut");
+                    //if user is logged in, provide the logout function
                     $("#login").click(function () {
                         var r = confirm("Do you want to LogOut?");
                         if (r == true) {
@@ -47,12 +49,13 @@
                     })
                     $.post('name.php', { email: email }, function (name) {
                         var firstname = name.split(" ");
-                        $("#welcome").html("Welcome " + firstname[0]);
+                        $("#welcome").html("Welcome " + firstname[0]); // adds the first name to a button
                     })
                     $("#address").click(function () {
-                        window.open('address.html', '', width = "30%", height = "30%")
+                        window.open('address.html', '', width = "30%", height = "30%") // link for address change page
                     })
                 }
+                // if not logged in, keeps the regular functionality for the buttons
                 else {
                     console.log("Not Logged In");
                     $("#login").click(function () {
