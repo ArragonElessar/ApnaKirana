@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="English">
+<head>
+    <title>
+        ApnaKirana
+    </title>
+    <script type="text/javascript" src="fn.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#submitter").click(function () {
+                var email = $("#email").val();
+                var pass = $("#password").val();
+                var confirm = $("#confirm").val();
+                var emailReg = new RegExp(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
+                if (pass == confirm) {
+                    if (emailReg.test(email)) {
+                        $.post('register.php', { email: email, pass: pass }, function (data) {
+                            if (data == "t") {
+                                $("#l1").css("visibility", "visible");
+                                $("#email").css("borderColor", "red");
+                                $("#email").val() = '';
+                                $("#password").val() = '';
+                            }
+                            else{
+                                $.post('pdetails.php',{email: email},function(data){
+                                    console.log(data);
+                                    alert("Sent");
+                                });
+                                setTimeout(function(){
+                                    window.open("pdetails.html","_blank");
+                                })
+                            }
+                        });
+                    }
+                    else {
+                        $("#email").css("borderColor", "red");
+                        $("#l1").css("visibility", "visible");
+                    }
+                }
+                else{
+                    $("#l2").css("visibility", "visible");
+                    $("#password").css("borderColor", "red");
+                    $("#confirm").css("borderColor", "red");
+                    $("#password").html(" ");
+                    $("#confirm").html(" ");
+                }
+            });
+        })
+    </script>
+</head>
+<style>
+    .buttons:hover{
+        background-color: salmon;
+    }
+    body{
+        background-color: beige;
+    }
+</style>
+<body>
+    <table style="width: 100%;">
+        <tr>
+            <td>
+                <button class="buttons" onclick="home()">ApnaKirana</button>
+            </td>
+            <td style="position: relative; width: 50%;">
+                <input id="i1" type="text" style="width: 95%">
+            </td>
+            <td>
+                <button class="buttons">Find</button>
+            </td>
+            <td>
+                <button class="buttons" onclick="register()">New User? Register</button>
+            </td>
+            <td>
+                <button class="buttons" onclick="login()">Existing User? Login</button>
+            </td>
+        </tr>
+    </table>
+    <hr>
+    <div>
+        <h3>New User Registration</h3>
+        <input type="email" id="email" placeholder="Email" required />
+        <label for="email" id="l1" style="visibility: hidden;"> Username Taken</label><br><br>
+        <input type="password" id="password" placeholder="Password" required />
+        <label for="password" id="l2" style="visibility: hidden;">Passwords don't Match</label><br><br>
+        <input type="password" id="confirm" placeholder="Confirm Password" required /><br><br>
+        <input type="button" id="submitter" value="Submit" class="buttons">
+    </div>
+</body>
+</html>

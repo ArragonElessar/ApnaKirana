@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="English">
+
+<head>
+    <title>
+        ApnaKirana
+    </title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            //searchbar functions
+            $("#searchbar").keyup(function () {
+                var text = $("#searchbar").val();
+                $.post('searchbar.php', { search: text }, function (data) {
+                    var suggestions = [];
+                    suggestions = data.split("?");
+                    console.log(suggestions);
+                    $("#suggestions").css("visibility", "visible");
+                    for (var i = 0; i < suggestions.length - 1; i++) {
+                        if (suggestions[i] != "") {
+                            $('<option/>').val(suggestions[i]).html(suggestions[i]).appendTo("#suggestions");
+                        }
+                    }
+
+                })
+            })
+            //checks if user is logged in
+            $.post('logStatus.php', { data: "Data" }, function (email) {
+                console.log(email);
+                var emailReg = new RegExp(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
+                if (emailReg.test(email)) {
+                    $("#register").html("Cart");
+                    $("#register").click(function () {
+                        setTimeout(function () { $("#frame").attr("src", "cart.html") }, 300);
+                    })
+                    $("#login").html("LogOut");
+                    $("#login").click(function () {
+                        var r = confirm("Do you want to LogOut?");
+                        if (r == true) {
+                            $.post('logout.php', { data: "L" }, function () {
+                                setTimeout(function () { window.location = "login.html" }, 500); // log out
+                            })
+                        }
+                    })
+                    $.post('pincode.php', { email: email }, function (pin) {
+                        $("#address").html("Deliver to: " + pin);    // Adds pincode to the button
+                    })
+                    $.post('name.php', { email: email }, function (name) {
+                        var firstname = name.split(" ");
+                        $("#welcome").html("Welcome " + firstname[0]);
+                    })
+                    $("#address").click(function () {
+                        window.open('address.html', '', width = "30%", height = "30%")
+                    })
+                }
+                else {
+                    console.log("Not Logged In");
+                    $("#login").click(function () {
+                        setTimeout(function () { window.location = "login.html" }, 500); //log in
+                    });
+                    $("#register").click(function () {
+                        setTimeout(function () { window.location = "register.html" }, 500); // register
+                    });
+                    $("#ribbon").css("visibility", "hidden");
+                }
+
+            })
+        })
+    </script>
+</head>
+<style>
+    .buttons:hover {
+        background-color: salmon;
+    }
+
+    body {
+        background-color: beige;
+    }
+
+    iframe {
+        width: 100%;
+    }
+</style>
+
+<body>
+    <div class="header">
+        <table style="width: 100%;">
+            <tr>
+                <td>
+                    <button class="buttons" id="home">ApnaKirana</button>
+                </td>
+                <td style="position: relative; width: 50%;">
+                    <input id="searchbar" type="text" style="width: 95%;" list="suggestions">
+                    <datalist id="suggestions" style="visibility: hidden;">
+                        <option value=""></option>
+                    </datalist>
+                </td>
+                <td>
+                    <button class="buttons">Find</button>
+                </td>
+                <td>
+                    <button class="buttons" id="register">New User? Register</button>
+                </td>
+                <td>
+                    <button class="buttons" id="login">Existing User? Login</button>
+                </td>
+            </tr>
+        </table>
+        <hr>
+    </div>
+    <div id="ribbon">
+        <table style="width: 100%;">
+            <tr>
+                <td></td>
+                <td>
+                    <button class="buttons" id="welcome">Welcome</button>
+                </td>
+                <td>
+                    <button class="buttons" id="address">Deliver to:</button>
+                </td>
+                <td>
+                    <button class="buttons" id="history">Buy Again</button>
+                </td>
+            </tr>
+        </table>
+        <br>
+    </div>
+    <iframe src="products.html" title="products" style="height: 600px;" id="frame"></iframe>
+</body>
+
+</html>

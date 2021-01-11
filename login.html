@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="English">
+<head>
+    <title>
+        ApnaKirana
+    </title>
+</head>
+<script type="text/javascript" src="fn.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(function(){
+        $("#login").click(function(){
+            var email = $("#email").val();
+            var pass = $("#pass").val();
+            $.post('login.php',{email:email, pass:pass},function(c){
+                console.log(c);
+                if(c == "M"){
+                    setTimeout(function(){window.location="MainWebsite.html"},500);
+                }
+                else{
+                    $("#l4").css("visibility","Visible");
+                    $("#email").css("borderColor","red");
+                    $("#pass").css("borderColor","red");
+                }
+            })
+        })
+    })
+</script>
+<style>
+    .buttons:hover{
+        background-color: salmon;
+    }
+    body{
+        background-color: beige;
+    }
+</style>
+<body>
+    <table style="width: 100%;">
+        <tr>
+            <td>
+                <button class="buttons" onclick="home()">ApnaKirana</button>
+            </td>
+            <td style="position: relative; width: 50%;">
+                <input id="i1" type="text" style="width: 95%;">
+            </td>
+            <td>
+                <button class="buttons">Find</button>
+            </td>
+            <td>
+                <button class="buttons" onclick="register()">New User? Register</button>
+            </td>
+            <td>
+                <button class="buttons" onclick="login()">Existing User? Login</button>
+            </td>
+        </tr>
+    </table>
+    <hr>
+    <h3>Login</h3>
+    <input type="text" id="email" placeholder="Email" required>
+    <br><br>
+    <input type="password" id="pass" placeholder="Password" required>
+    <br><br>
+    <input type="submit" value="Submit" class="buttons" id="login">
+    <br><br>
+    <label for="submit" style="visibility: hidden; color: red;" id="l4">Invalid Credentials</label> 
+</body>
+
+</html>

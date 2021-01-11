@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="English">
+<head>
+    <title>
+        ApnaKirana
+    </title>
+    <script type="text/javascript" src="fn.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.ajax({
+                url:"statefiller.php",
+                method:"POST",
+                data: {data: "data"},
+                success: function(a){ 
+                    statearray = a.split('8');
+                    for(var i=0; i < statearray.length-1; i++){
+                        $('<option/>').val(statearray[i]).html(statearray[i]).appendTo("#state");
+                    }
+                }            
+            })
+        });
+        $(function(){
+            $("#submit").click(function(){
+                var name = $("#name").val();
+                var mobile = $("#mobile").val();
+                var addline1 = $("#addline1").val();
+                var addline2 = $("#addline2").val();
+                var state = $("#state").val();
+                var city = $("#city").val();
+                var pincode = $('#pin').val(); 
+                var phoneReg = new RegExp(/^\d{10}$/);
+                var pinReg = new RegExp(/^(?=[0-9]*$)(?:.{6})$/);
+                if(phoneReg.test(mobile) && pinReg.test(pincode)){
+                    $.post('pdetails.php',{name: name, mobile:mobile, addline1:addline1, addline2:addline2, state:state, city: city, pincode: pincode}, function(data){
+                        console.log(data);
+                        setTimeout(function(){window.location = "login.html"},500);
+                    });
+                }
+                else if(!pinReg.test(pincode)){
+                    $("#l3").css("visibility","visible");
+                    $("#pin").css("borderColor", "red");
+                }
+                else if(!phoneReg.test(mobile)){
+                    $("#l1").css("visibility","visible");
+                    $("#mobile").css("borderColor", "red");
+                }
+            })
+        });
+        $(function(){
+            $("#state").change(function(){
+                $("#city").css("visibility", "visible");
+                var state = $("#state").val();
+                $.post('cityfiller.php',{state : state}, function(b){   
+                    cityArray = b.split("9");
+                    console.log(cityArray);
+                    console.log(cityArray.length);
+                    for(var j=0; j< cityArray.length-1; j++){
+                        $('<option/>').val(cityArray[j]).html(cityArray[j]).appendTo("#city");
+                    }
+                });
+            });
+        })
+    </script>
+</head>
+<style>
+    .buttons:hover{
+        background-color: salmon;
+    }
+    body{
+        background-color: beige;
+    }
+</style>
+<body>
+    <table style="width: 100%;">
+        <tr>
+            <td>
+                <button class="buttons" onclick="home()">ApnaKirana</button>
+            </td>
+            <td style="position: relative; width: 50%;">
+                <input id="i1" type="text" style="width: 95%">
+            </td>
+            <td>
+                <button class="buttons">Find</button>
+            </td>
+            <td>
+                <button class="buttons" onclick="register()">New User? Register</button>
+            </td>
+            <td>
+                <button class="buttons" onclick="login()">Existing User? Login</button>
+            </td>
+        </tr>
+    </table>
+    <hr>
+    <div>
+        <h3>Personal Details</h3>
+        <input type="text" id="name" placeholder="Full Name" required><br><br>
+        <input type="text" id="mobile" placeholder="Mobile" required>
+        <label for="mobile" id="l1" style="visibility: hidden;">Enter a valid Mobile</label>
+        <br><br>
+        <input type="text" id="addline1" placeholder="Address Line 1" required>
+        <br><br>
+        <input type="text" id="addline2" placeholder="Address Line 2" required>
+        <br><br>
+        <input type="text" id="pin" placeholder="PinCode" required>
+        <label for="pincode" id="l3" style="visibility: hidden;">Enter a Valid Pincode</label>
+        <br><br>
+        <select id="state" name="state" required>
+            <option value="">Select State</option>
+        </select>
+        <br><br>
+        <select id="city" name="city" style="visibility: hidden;" required>
+            <option value="">Select City</option>
+        </select>
+        <br><br>
+        <input type="button" id="submit" value="Submit" class="buttons"> 
+    </div>
+</body>
+</html>

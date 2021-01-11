@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="English">
+
+<head>
+    <title>
+        ApnaKirana
+    </title>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var i = 0;
+        var cart = [];
+        $.post('name.php', { data: "data" }, function (name) {
+            $("#name").html(name.split(" ")[0] + "'s Cart");
+        })
+        $.post('cart.php', { email: "data" }, function (data) {
+            var objects = JSON.parse(data);
+            while (i < objects.length) {
+                cart.push(objects[i]);
+                i += 4;
+            }
+            console.log(cart);
+            var $table = $("#table");
+            var $liner = $("<tr></tr>");
+            $liner.append($("<th></th>").html("Sr.no"));
+            $liner.append($("<th></th>").html("Product"));
+            $liner.append($("<th></th>").html("Rate"));
+            $liner.append($("<th></th>").html("Quantity"));
+            $liner.append($("<th></th>").html("Value"));
+            $table.append($liner);
+            var total = 0;
+            for (i = 0; i < cart.length; i++) {
+                console.log("hi")
+                var $line = $("<tr></tr>");
+                $line.append($("<td></td>").html(i + 1));
+                $line.append($("<td></td>").html(cart[i].name));
+                $line.append($("<td></td>").html(cart[i].rate));
+                $line.append($("<td></td>").html(cart[i].quantity));
+                $line.append($("<td></td>").html(cart[i].value));
+                total = total + parseFloat(cart[i].value);
+                $table.append($line);
+            }
+            $table.appendTo("#cart");
+            $("#total").html("Total: " + total);
+        })
+
+
+
+    })
+</script>
+<style>
+    body {
+        background-color: beige;
+    }
+
+    .buttons:hover {
+        background-color: salmon;
+    }
+</style>
+
+<body>
+    <h3 id="name"></h3>
+    <table style="width: 100;">
+        <tr>
+            <td style="width: 75%;" id="cart">
+                <table id="table" style="width: 100%; text-align: center;">
+
+                </table>
+            </td>
+            <td style="width: 25%; position: absolute; right: 5%; background-color: azure;">
+                <label for="total" id="total"></label>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="English">
+
+<head>
+    <title>
+        ApnaKirana
+    </title>
+</head>
+<style>
+    .buttons:hover{
+        background-color: salmon;
+    }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var name = 'papaya';
+        $.post('products.php', { name: name }, function (data) {
+            console.log(data);
+            var product = JSON.parse(data);
+            console.log(product.href);
+            if (data == 'n') {
+                alert("Please Log in First");
+                setTimeout(function () { window.location = "login.php" }, 500);
+            }
+            $("#image").attr("src", "images/" + product.href);
+            $("#pname").html(product.name.replace(product.name.charAt(0), product.name.charAt(0).toUpperCase()));
+            $("#pname1").html(product.name.replace(product.name.charAt(0), product.name.charAt(0).toUpperCase()));
+            $("#description1").html(product.description1);
+            $("#description2").html(product.description2);
+            $("#description3").html(product.description3);
+            $("#rate").html("Rate: " + product.rate + "/" + product.unit);
+            for (var i = 1; i <= 10; i++) {
+                $('<option/>').val(i).html(i).appendTo("#quantity");
+            }
+            $("#quantity").change(function(){{
+                var qty = $("#quantity").val();
+                $("#value").html("Total: " + parseFloat(qty)*parseFloat(product.rate));
+                $("#value").css("visibility","visible");
+            }})
+            $("#carter").click(function () {
+                var qty = $("#quantity").val();
+                $.post('addcart.php', { name: product.name, quantity: qty, rate: product.rate}, function (data) {
+                    console.log(data);
+                })
+            })
+        });
+    })
+</script>
+<style>
+    .buttons:hover {
+        background-color: salmon;
+    }
+
+    body {
+        background-color: beige;
+    }
+
+    li {
+        word-wrap: break-word;
+    }
+
+    td {
+        padding: 2%;
+    }
+</style>
+
+<body>
+    <table style="width: 100%;">
+        <tr style="height: 40%;">
+            <td style="width: 40%;">
+                <img id="image" alt="productname">
+            </td>
+            <td style="width: 30%;">
+                <h3 id="pname"></h3>
+                <ul>
+                    <li id="description1"></li>
+                    <li id="description2"></li>
+                    <li id="description3"></li>
+                </ul>
+            </td>
+            <td style="background-color: azure; width: 30%;">
+                <h3 id="pname1"></h3>
+                <b>
+                    <p id="rate"></p>
+                </b>
+                <select id="quantity" required>
+                    <option value="">qty</option>
+                </select>
+                <br><br>
+                <label for="value" id="value" style="visibility: hidden;"></label>
+                <br><br>
+                <input type="button" id="carter" value="Add to Cart" class="buttons">
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

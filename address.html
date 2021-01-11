@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="English">
+
+<head>
+    <title>
+        ApnaKirana
+    </title>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.post('address.php', { data: "Data" }, function (address) {
+            console.log(address.split("?"));
+            addressArray = address.split("?");
+            var str = addressArray[0] + ",  " + addressArray[1] + "....";
+            $("#current").html(str);
+            $("#current").click(function () {
+                window.close();
+            })
+        });
+        $.ajax({
+            url: "statefiller.php",
+            method: "POST",
+            data: { data: "data" },
+            success: function (a) {
+                statearray = a.split('8');
+                for (var i = 0; i < statearray.length - 1; i++) {
+                    $('<option/>').val(statearray[i]).html(statearray[i]).appendTo("#state");
+                }
+            }
+        });
+        $("#adder").click(function () {
+            $("#form").css("visibility", "visible");
+        });
+        $(function () {
+            $("#state").change(function () {
+                $("#city").css("visibility", "visible");
+                var state = $("#state").val();
+                $.post('cityfiller.php', { state: state }, function (b) {
+                    cityArray = b.split("9");
+                    console.log(cityArray);
+                    console.log(cityArray.length);
+                    for (var j = 0; j < cityArray.length - 1; j++) {
+                        $('<option/>').val(cityArray[j]).html(cityArray[j]).appendTo("#city");
+                    }
+                });
+            });
+        });
+        $("#submit").click(function () {
+            var addline1 = $("#addline1").val();
+            var addline2 = $("#addline2").val();
+            var state = $("#state").val();
+            var city = $("#city").val();
+            var pincode = $('#pin').val();
+            var pinReg = new RegExp(/^(?=[0-9]*$)(?:.{6})$/);
+            if (pinReg.test(pincode)) {
+                $.post('update.php', { addline1: addline1, addline2: addline2, state: state, city: city, pincode: pincode }, function (a) {
+                    console.log(a);
+                    alert("Address updated");
+                    window.close();
+                });
+            }
+            else {
+                $("#l3").css("visibility", "visible");
+                $("#pin").css("borderColor", "red");
+            }
+        });
+    });
+</script>
+<style>
+    .buttons:hover {
+        background-color: salmon;
+    }
+
+    body {
+        background-color: beige;
+    }
+</style>
+
+<body>
+    <h3>Current Address</h3>
+    <button class="buttons" id="current"></button>
+    <br><br>
+    <button class="buttons" id="adder">Update your Address</button>
+    <br><br>
+    <div id="form" style="visibility: hidden;">
+        <input type="text" id="addline1" placeholder="Address Line 1" required>
+        <br><br>
+        <input type="text" id="addline2" placeholder="Address Line 2" required>
+        <br><br>
+        <input type="text" id="pin" placeholder="PinCode" required>
+        <label for="pincode" id="l3" style="visibility: hidden;">Enter a Valid Pincode</label>
+        <br><br>
+        <select id="state" name="state" required>
+            <option value="">Select State</option>
+        </select>
+        <br><br>
+        <select id="city" name="city" style="visibility: hidden;" required>
+            <option value="">Select City</option>
+        </select>
+        <br><br>
+        <input type="button" id="submit" value="Submit" class="buttons">
+    </div>
+</body>
+
+</html>
